@@ -120,34 +120,33 @@ def test_model(path ,test_data):
     plt.show()
     return ae_imgs
     
-def display_mask(model , i):
+def display_mask_save(model , i):
     model = np.round(model)
     x = np.array(model[i].reshape(512,512,3) *255).astype('uint8')
     img = Image.fromarray(x)
     #img.show()
     #이미지 저장.
-    #img.save(f"./testtarget/{i}.jpg")
+    img.save(f"./testtarget/{i}.jpg")
     plt.imshow(img)
     return model
-
 
 def display_mask_test(model , i , test_data):
+    X_test_rgb = imagePrep('data/test/*', 512, 512, 1)
     model = np.round(model)
     x = np.array(model[i].reshape(512,512,3) *255).astype('uint8')
     img = Image.fromarray(x)
     #img.show()
     #이미지 저장.
     #img.save(f"./testtarget/{i}.jpg")
-    plt.figure(figsize=(70, 20))
-    ax = plt.subplot(2, 7, 1) 
-    plt.imshow((test_data[i]*255).astype('uint8'))
+    plt.figure(figsize=(60, 10))
+    ax = plt.subplot(1, 6, 1) 
+    plt.imshow((X_test_rgb[i]*255).astype('uint8'))
     ax.axis('off')
     
-    ax = plt.subplot(2, 7, 2) 
+    ax = plt.subplot(1, 6, 2) 
     plt.imshow(img)
     ax.axis('off')
     return model
-
 
 # 오토인코딩 결과를 히스토그램으로 표시 
 def displayHist(IMG):
