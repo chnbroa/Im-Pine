@@ -14,7 +14,7 @@ import numpy as np
 import glob
 import tensorflow as tf
 import matplotlib.cm as cm
-
+import re
 
 # 모델
 def get_model(img_size, num_classes):
@@ -79,6 +79,7 @@ def get_model(img_size, num_classes):
 def imagePrep(path_pattern, WIDTH, HEIGHT, CHANNEL): 
     
     filelist = glob.glob(path_pattern)
+    filelist = sorted(filelist, key=lambda s: int(re.search(r'\d+', s).group()))
     fileabslist = [os.path.abspath(fpath) for fpath in filelist]
     X = []
     for fname in fileabslist:
