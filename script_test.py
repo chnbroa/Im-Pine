@@ -76,16 +76,20 @@ def get_model(img_size, num_classes):
 
 
 # 이미지 전처리
-def imagePrep(path_pattern, WIDTH, HEIGHT, CHANNEL): 
-    
+def imagePrep(path_pattern, WIDTH=0, HEIGHT=0, CHANNEL=0): 
     filelist = glob.glob(path_pattern)
-    filelist = sorted(filelist, key=lambda s: int(re.search(r'\d+', s).group()))
+    filelist_len = len(filelist)
+    try:
+        filelist = sorted(filelist, key=lambda s: int(re.search(r'\d+', s).group()))
+    except:
+        pass
     fileabslist = [os.path.abspath(fpath) for fpath in filelist]
     X = []
     for fname in fileabslist:
         img = cv2.imread(fname).astype('float32') / 255
         #print(img.shape)
-        img = cv2.resize(img, (WIDTH, HEIGHT))
+        if filelist_len != 1:
+            img = cv2.resize(img, (WIDTH, HEIGHT))
         if CHANNEL == 1:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             #img = np.expand_dims(img, axis=2)
@@ -133,11 +137,14 @@ def display_mask_save(model , i):
 
 def display_mask_test(model , i , test_data):
     X_test_rgb = imagePrep('data/test/*', 512, 512, 1)
+    model_len = len(model)
     model = np.round(model)
-    x = np.array(model[i].reshape(512,512,3) *255).astype('uint8')
+    if model_len != 1:
+        x = np.array(model[i].reshape(512,512,3) *255).astype('uint8')
+    else:
+        x = np.array(model[i]*255).astype('uint8')
     img = Image.fromarray(x)
     #img.show()
-    #이미지 저장.
     #img.save(f"./testtarget/{i}.jpg")
     plt.figure(figsize=(60, 10))
     ax = plt.subplot(1, 6, 1) 
@@ -148,6 +155,7 @@ def display_mask_test(model , i , test_data):
     plt.imshow(img)
     ax.axis('off')
     return model
+
 
 # 오토인코딩 결과를 히스토그램으로 표시 
 def displayHist(IMG):
